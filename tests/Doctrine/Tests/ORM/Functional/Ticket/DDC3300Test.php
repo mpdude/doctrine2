@@ -36,8 +36,8 @@ class DDC3300Test extends OrmFunctionalTestCase
             ]
         );
 
-        $boss     = new DDC3300Boss();
-        $employee = new DDC3300Employee();
+        $boss     = new DDC3300Boss('boss');
+        $employee = new DDC3300Employee('employee');
 
         $this->_em->persist($boss);
         $this->_em->persist($employee);
@@ -53,7 +53,7 @@ class DDC3300Test extends OrmFunctionalTestCase
 /**
  * @Entity
  * @InheritanceType("SINGLE_TABLE")
- * @DdiscriminatorColumn(name="discr", type="string")
+ * @DiscriminatorColumn(name="discr", type="string")
  * @DiscriminatorMap({
  *      "boss"     = "Doctrine\Tests\ORM\Functional\Ticket\DDC3300BossInterface",
  *      "employee" = "Doctrine\Tests\ORM\Functional\Ticket\DDC3300EmployeeInterface"
@@ -72,6 +72,13 @@ interface DDC3300BossInterface
 /** @Entity */
 class DDC3300Boss extends DDC3300Person implements DDC3300BossInterface
 {
+    /** @Column(type="string") */
+    public $bossCol;
+
+    public function __construct($bossCol)
+    {
+        $this->bossCol = $bossCol;
+    }
 }
 
 interface DDC3300EmployeeInterface
@@ -81,4 +88,11 @@ interface DDC3300EmployeeInterface
 /** @Entity */
 class DDC3300Employee extends DDC3300Person implements DDC3300EmployeeInterface
 {
+    /** @Column(type="string") */
+    public $employeeCol;
+
+    public function __construct($employeeCol)
+    {
+        $this->employeeCol = $employeeCol;
+    }
 }
