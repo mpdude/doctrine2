@@ -439,7 +439,9 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
                 if ($mapping['type'] & ClassMetadata::TO_MANY && !$mapping['isOwningSide']) {
                     throw MappingException::illegalToManyAssociationOnMappedSuperclass($parentClass->name, $field);
                 }
-                $mapping['sourceEntity'] = $subClass->name;
+                if (! isset($mapping['inherited'])) {
+                    $mapping['sourceEntity'] = $subClass->name;
+                }
             }
 
             //$subclassMapping = $mapping;
