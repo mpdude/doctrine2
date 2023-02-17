@@ -1284,16 +1284,11 @@ class UnitOfWork implements PropertyChangedListener
      */
     private function getCommitOrder(): array
     {
-        $calc = $this->getCommitOrderCalculator();
+        $calc = $this->createCommitOrderCalculator();
 
-        // See if there are any new classes in the changeset, that are not in the
-        // commit order graph yet (don't have a node).
-        // We have to inspect changeSet to be able to correctly build dependencies.
-        // It is not possible to use IdentityMap here because post inserted ids
-        // are not yet available.
         $newNodes = [];
 
-        foreach (array_merge($this->entityInsertions, $this->entityUpdates, $this->entityDeletions) as $entity) {
+        foreach (array_merge($this->entityInsertions, $this->entityUpdates) as $entity) {
             $class = $this->em->getClassMetadata(get_class($entity));
 
             if ($calc->hasNode($class->name)) {
@@ -2566,13 +2561,8 @@ class UnitOfWork implements PropertyChangedListener
                 // Do nothing
         }
     }
-
-    /**
-     * Gets the CommitOrderCalculator used by the UnitOfWork to order commits.
-     *
-     * @return CommitOrderCalculator
-     */
-    public function getCommitOrderCalculator()
+ 
+    private function createCommitOrderCalculator(): CommitOrderCalculator
     {
         return new Internal\CommitOrderCalculator();
     }
