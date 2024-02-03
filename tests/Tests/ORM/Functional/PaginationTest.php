@@ -635,8 +635,6 @@ class PaginationTest extends OrmFunctionalTestCase
         self::assertCount(2, $getCountQuery->invoke($paginator)->getParameters());
         self::assertCount(9, $paginator);
 
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, Query\SqlWalker::class);
-
         $paginator = new Paginator($query);
 
         // if select part of query is replaced with count(...) paginator should remove

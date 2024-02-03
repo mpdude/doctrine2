@@ -97,7 +97,7 @@ class CustomTreeWalkersTest extends OrmTestCase
         $this->generateSql(
             'select u from Doctrine\Tests\Models\CMS\CmsUser u',
             [],
-            AddUnknownQueryComponentWalker::class
+            AddUnknownQueryComponentOutputWalker::class
         );
     }
 
@@ -111,7 +111,7 @@ class CustomTreeWalkersTest extends OrmTestCase
     }
 }
 
-class AddUnknownQueryComponentWalker extends Query\SqlOutputWalker
+class AddUnknownQueryComponentOutputWalker extends Query\SqlOutputWalker
 {
     protected function createSqlForFinalizer(AST\SelectStatement $AST): string
     {

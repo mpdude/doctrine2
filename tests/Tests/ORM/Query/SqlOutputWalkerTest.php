@@ -6,22 +6,23 @@ namespace Doctrine\Tests\ORM\Query;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\ParserResult;
-use Doctrine\ORM\Query\SqlWalker;
+use Doctrine\ORM\Query\SqlOutputWalker;
 use Doctrine\Tests\OrmTestCase;
 
 /**
- * Tests for {@see \Doctrine\ORM\Query\SqlWalker}
+ * Tests for {@see \Doctrine\ORM\Query\SqlOutputWalker}
  *
+ * @covers \Doctrine\ORM\Query\SqlOutputWalker
  * @covers \Doctrine\ORM\Query\SqlWalker
  */
-class SqlWalkerTest extends OrmTestCase
+class SqlOutputWalkerTest extends OrmTestCase
 {
-    /** @var SqlWalker */
+    /** @var SqlOutputWalker */
     private $sqlWalker;
 
     protected function setUp(): void
     {
-        $this->sqlWalker = new SqlWalker(new Query($this->getTestEntityManager()), new ParserResult(), []);
+        $this->sqlWalker = new SqlOutputWalker(new Query($this->getTestEntityManager()), new ParserResult(), []);
     }
 
     /** @dataProvider getColumnNamesAndSqlAliases */

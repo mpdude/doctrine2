@@ -18,6 +18,7 @@ use Doctrine\ORM\Query\AST\DeleteStatement;
 use Doctrine\ORM\Query\AST\SelectStatement;
 use Doctrine\ORM\Query\AST\UpdateStatement;
 use Doctrine\ORM\Query\Exec\AbstractSqlExecutor;
+use Doctrine\ORM\Query\Exec\SqlFinalizer;
 use Doctrine\ORM\Query\OutputWalker;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Query\ParameterTypeInferer;
@@ -294,6 +295,15 @@ class Query extends AbstractQuery
         if ($this->parserResult->hasSqlFinalizer()) {
             $this->sqlExecutor = $this->parserResult->getSqlFinalizer()->createExecutor($this);
         } else {
+            Deprecation::trigger(
+                'doctrine/orm',
+                'https://github.com/doctrine/orm/pull/xxx',
+                'In Doctrine ORM 3.0, instances of %s must provide an instance of %s. Check the %s output walker that created this parser result.',
+                ParserResult::class,
+                SqlFinalizer::class,
+                $this->getHint(self::HINT_CUSTOM_OUTPUT_WALKER)
+            );
+
             $this->sqlExecutor = $this->parserResult->getSqlExecutor();
         }
     }
@@ -829,6 +839,9 @@ class Query extends AbstractQuery
     protected function getQueryCacheId(): string
     {
         ksort($this->_hints);
+
+        // TODO: Once \Doctrine\ORM\Query\Parser::parse accepts only instances of OutputWalker,
+        // this branching can be removed and we never need to consider first/max results.
 
         if (! $this->hasHint(self::HINT_CUSTOM_OUTPUT_WALKER)) {
             // Assume Parser will create the SqlOutputWalker; save is_a call, which might trigger a class load
