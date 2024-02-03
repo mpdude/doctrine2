@@ -391,6 +391,7 @@ class Parser
             $this->queryComponents = $treeWalkerChain->getQueryComponents();
         }
 
+        // TODO: In 3.0, add a runtime check that the class implements OutputWalker?
         $outputWalkerClass = $this->customOutputWalker ?: SqlOutputWalker::class;
         $outputWalker      = new $outputWalkerClass($this->query, $this->parserResult, $this->queryComponents);
 
@@ -398,6 +399,14 @@ class Parser
             $finalizer = $outputWalker->getFinalizer($AST);
             $this->parserResult->setSqlFinalizer($finalizer);
         } else {
+            // TODO once this path is removed, update \Doctrine\ORM\Query::getQueryCacheId as well
+            Deprecation::trigger(
+                'doctrine/orm',
+                'https://github.com/doctrine/orm/pull/xxx',
+                'In Doctrine ORM 3.0, output walkers will need to implement the %s interface',
+                OutputWalker::class
+            );
+
             $executor = $outputWalker->getExecutor($AST);
             $this->parserResult->setSqlExecutor($executor);
         }

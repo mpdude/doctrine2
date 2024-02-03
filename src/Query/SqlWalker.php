@@ -179,6 +179,15 @@ class SqlWalker implements TreeWalker
      */
     public function __construct($query, $parserResult, array $queryComponents)
     {
+        if (! $this instanceof SqlOutputWalker) {
+            Deprecation::trigger(
+                'doctrine/orm',
+                'https://github.com/doctrine/orm/pull/xxx',
+                'The %s class may be removed in Doctrine ORM 3.0. To implement an output walker, inherit from %s and override the getFinalizer() or createSqlForFinalizer() methods instead.',
+                self::class,
+                SqlOutputWalker::class
+            );
+        }
         $this->query           = $query;
         $this->parserResult    = $parserResult;
         $this->queryComponents = $queryComponents;
@@ -275,12 +284,23 @@ class SqlWalker implements TreeWalker
     /**
      * Gets an executor that can be used to execute the result of this walker.
      *
+     * @deprecated This method will be replaced by the getFinalizer() method in 3.0
+     *
      * @param AST\DeleteStatement|AST\UpdateStatement|AST\SelectStatement $AST
      *
      * @return Exec\AbstractSqlExecutor
      */
     public function getExecutor($AST)
     {
+        Deprecation::triggerIfCalledFromOutside(
+            'doctrine/orm',
+            'https://github.com/doctrine/orm/pull/xxx',
+            'In Doctrine ORM 3.0, output walkers need to implement the %s interface and no longer provide a getExecutor() method. Thus, %s::%s will be removed.',
+            OutputWalker::class,
+            self::class,
+            __METHOD__
+        );
+
         switch (true) {
             case $AST instanceof AST\DeleteStatement:
                 $primaryClass = $this->em->getClassMetadata($AST->deleteClause->abstractSchemaName);

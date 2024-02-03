@@ -1,3 +1,18 @@
+# Upgrade to xxx
+
+## Changes for custom output walkers
+
+To implement a custom output walker, extend the `SqlOutputWalker` class. Either override
+the `getFinalizer()` method to return an instance of `SqlFinalizer`, or override 
+`createSqlForFinalizer()` and return your SQL string from it. 
+
+When extending `SqlOutputWalker`, the query cache speeding up the DQL->SQL transformation
+will no longer take the `Query::setFirstResult()` and `Query::setMaxResults()` values
+into consideration, so your output walker must not use or depend on these values. If
+it does, move this part to a custom `SqlFinalizer` class.
+
+https://github.com/doctrine/orm/pull/11188 gives more background.
+
 # Upgrade to 2.17
 
 ## Deprecate annotations classes for named queries
