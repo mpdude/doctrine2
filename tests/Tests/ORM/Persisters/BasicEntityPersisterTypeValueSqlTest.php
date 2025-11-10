@@ -151,6 +151,11 @@ class BasicEntityPersisterTypeValueSqlTest extends OrmTestCase
             '(t0.id IN (?, ?) OR t0.id IS NULL)',
             $this->persister->getSelectConditionStatementSQL('id', [123, null, 234])
         );
+
+        self::assertEquals(
+            '1=0',
+            $this->persister->getSelectConditionStatementSQL('id', [])
+        );
     }
 
     public function testCountCondition(): void
