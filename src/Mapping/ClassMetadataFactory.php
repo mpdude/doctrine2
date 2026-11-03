@@ -115,6 +115,27 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
         $this->initialized     = true;
     }
 
+    /**
+     * @deprecated Use {@see getAllMetadata()} instead, which also returns the metadata of classes
+     *             that have not been loaded yet.
+     *
+     * {@inheritDoc}
+     *
+     * @return ClassMetadata<object>[]
+     */
+    public function getLoadedMetadata(): array
+    {
+        Deprecation::trigger(
+            'doctrine/orm',
+            // TODO: replace with the actual issue/PR URL once one has been filed.
+            'https://github.com/doctrine/orm/issues/TODO',
+            '%s() is deprecated, call getAllMetadata() instead.',
+            __METHOD__,
+        );
+
+        return parent::getLoadedMetadata();
+    }
+
     protected function onNotFoundMetadata(string $className): ClassMetadata|null
     {
         $eventArgs = new OnClassMetadataNotFoundEventArgs($className, $this->em);

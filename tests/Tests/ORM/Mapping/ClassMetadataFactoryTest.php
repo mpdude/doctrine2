@@ -9,6 +9,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
+use Doctrine\Deprecations\PHPUnit\VerifyDeprecations;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnClassMetadataNotFoundEventArgs;
@@ -45,6 +46,7 @@ use Doctrine\Tests\TestUtil;
 use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use ReflectionClass;
 
 use function array_search;
@@ -55,6 +57,19 @@ use function sprintf;
 
 class ClassMetadataFactoryTest extends OrmTestCase
 {
+    use VerifyDeprecations;
+
+    #[IgnoreDeprecations]
+    public function testGetLoadedMetadataIsDeprecated(): void
+    {
+        $cmf = new ClassMetadataFactory();
+        $cmf->setEntityManager($this->createEntityManager(new MetadataDriverMock()));
+
+        $this->expectDeprecationWithIdentifier('https://github.com/doctrine/orm/issues/TODO');
+
+        $cmf->getLoadedMetadata();
+    }
+
     public function testGetMetadataForSingleClass(): void
     {
         $platform = $this->createStub(AbstractPlatform::class);
