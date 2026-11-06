@@ -427,6 +427,15 @@ parameters:
 			path: src/Cache/Persister/Entity/AbstractEntityPersister.php
 
 		-
+			message: '''
+				#^Call to deprecated method getOrderings\(\) of class Doctrine\\Common\\Collections\\Criteria\:
+				use orderings\(\) instead$#
+			'''
+			identifier: method.deprecated
+			count: 3
+			path: src/Cache/Persister/Entity/AbstractEntityPersister.php
+
+		-
 			message: '#^Method Doctrine\\ORM\\Cache\\Persister\\Entity\\AbstractEntityPersister\:\:__construct\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
 			identifier: missingType.generics
 			count: 1
@@ -439,6 +448,12 @@ parameters:
 			path: src/Cache/Persister/Entity/AbstractEntityPersister.php
 
 		-
+			message: '#^Method Doctrine\\ORM\\Cache\\Persister\\Entity\\AbstractEntityPersister\:\:getOrderings\(\) should return array\<string, Doctrine\\Common\\Collections\\Order\|SortDirection\> but returns array\<string, Doctrine\\Common\\Collections\\Order\|string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Cache/Persister/Entity/AbstractEntityPersister.php
+
+		-
 			message: '#^Method Doctrine\\ORM\\Cache\\Persister\\Entity\\AbstractEntityPersister\:\:loadManyToManyCollection\(\) has parameter \$collection with generic class Doctrine\\ORM\\PersistentCollection but does not specify its types\: TKey, T$#'
 			identifier: missingType.generics
 			count: 1
@@ -447,6 +462,18 @@ parameters:
 		-
 			message: '#^Method Doctrine\\ORM\\Cache\\Persister\\Entity\\AbstractEntityPersister\:\:loadOneToManyCollection\(\) has parameter \$collection with generic class Doctrine\\ORM\\PersistentCollection but does not specify its types\: TKey, T$#'
 			identifier: missingType.generics
+			count: 1
+			path: src/Cache/Persister/Entity/AbstractEntityPersister.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(string\)\: mixed\)\|null, Closure\(SortDirection\)\: \(''ASC''\|''DESC''\) given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Cache/Persister/Entity/AbstractEntityPersister.php
+
+		-
+			message: '#^Parameter \#1 \$orderings of method Doctrine\\Common\\Collections\\Criteria\:\:orderBy\(\) expects array\<string, Doctrine\\Common\\Collections\\Order\|string\>, array\<string, SortDirection\|string\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Cache/Persister/Entity/AbstractEntityPersister.php
 
@@ -511,18 +538,6 @@ parameters:
 			path: src/Decorator/EntityManagerDecorator.php
 
 		-
-			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactory\) of method Doctrine\\ORM\\Decorator\\EntityManagerDecorator\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManager\:\:getMetadataFactory\(\)$#'
-			identifier: method.childReturnType
-			count: 1
-			path: src/Decorator/EntityManagerDecorator.php
-
-		-
-			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactory\) of method Doctrine\\ORM\\Decorator\\EntityManagerDecorator\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManagerDecorator\<Doctrine\\ORM\\EntityManagerInterface\>\:\:getMetadataFactory\(\)$#'
-			identifier: method.childReturnType
-			count: 1
-			path: src/Decorator/EntityManagerDecorator.php
-
-		-
 			message: '#^Method Doctrine\\ORM\\EntityManager\:\:checkLockRequirements\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
 			identifier: missingType.generics
 			count: 1
@@ -557,30 +572,6 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: src/EntityManager.php
-
-		-
-			message: '#^Parameter \#1 \$className of method Doctrine\\Persistence\\Mapping\\AbstractClassMetadataFactory\<Doctrine\\ORM\\Mapping\\ClassMetadata\>\:\:getMetadataFor\(\) expects class\-string, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/EntityManager.php
-
-		-
-			message: '#^Property Doctrine\\ORM\\EntityManager\:\:\$metadataFactory \(Doctrine\\ORM\\Mapping\\ClassMetadataFactory\) does not accept object\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/EntityManager.php
-
-		-
-			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactory\) of method Doctrine\\ORM\\EntityManager\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManager\:\:getMetadataFactory\(\)$#'
-			identifier: method.childReturnType
-			count: 1
-			path: src/EntityManager.php
-
-		-
-			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactory\) of method Doctrine\\ORM\\EntityManagerInterface\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManager\:\:getMetadataFactory\(\)$#'
-			identifier: method.childReturnType
-			count: 1
-			path: src/EntityManagerInterface.php
 
 		-
 			message: '#^Method Doctrine\\ORM\\EntityRepository\:\:findBy\(\) should return list\<T of object\> but returns array\<mixed\>\.$#'
@@ -811,6 +802,174 @@ parameters:
 			path: src/Internal/StronglyConnectedComponents.php
 
 		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addDefaultDiscriminatorMap\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addInheritedEmbeddedClasses\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addInheritedEmbeddedClasses\(\) has parameter \$subClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addInheritedFields\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addInheritedFields\(\) has parameter \$subClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addInheritedIndexes\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addInheritedIndexes\(\) has parameter \$subClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addInheritedRelations\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addInheritedRelations\(\) has parameter \$subClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addMappingInheritanceInformation\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addNestedEmbeddedClasses\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:addNestedEmbeddedClasses\(\) has parameter \$subClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:completeIdGeneratorMapping\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:doLoadMetadata\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:doLoadMetadata\(\) has parameter \$parent with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:findAbstractEntityClassesNotListedInDiscriminatorMap\(\) has parameter \$rootEntityClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:inheritIdGeneratorMapping\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:inheritIdGeneratorMapping\(\) has parameter \$parent with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:initializeReflection\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:isEntity\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:newClassMetadataInstance\(\) return type with generic class Doctrine\\ORM\\Mapping\\ClassMetadata does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:onNotFoundMetadata\(\) return type with generic class Doctrine\\ORM\\Mapping\\ClassMetadata does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:validateRuntimeMetadata\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:validateRuntimeMetadata\(\) has parameter \$parent with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory\:\:wakeupReflection\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Method Doctrine\\Persistence\\Mapping\\ProxyClassNameResolver@anonymous/src/Mapping/AbstractClassMetadataFactory\.php\:101\:\:resolveClassName\(\) should return class\-string but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Parameter \#1 \$generator of method Doctrine\\ORM\\Mapping\\ClassMetadata\<object\>\:\:setIdGenerator\(\) expects Doctrine\\ORM\\Id\\AbstractIdGenerator, object given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
+			message: '#^Parameter \#1 \$rootEntityClass of static method Doctrine\\ORM\\Mapping\\MappingException\:\:missingInheritanceTypeDeclaration\(\) expects class\-string, class\-string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
 			message: '#^Method Doctrine\\ORM\\Mapping\\AnsiQuoteStrategy\:\:getColumnAlias\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
 			identifier: missingType.generics
 			count: 1
@@ -1021,164 +1180,8 @@ parameters:
 			path: src/Mapping/ClassMetadata.php
 
 		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addDefaultDiscriminatorMap\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addInheritedEmbeddedClasses\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addInheritedEmbeddedClasses\(\) has parameter \$subClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addInheritedFields\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addInheritedFields\(\) has parameter \$subClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addInheritedIndexes\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addInheritedIndexes\(\) has parameter \$subClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addInheritedRelations\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addInheritedRelations\(\) has parameter \$subClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addMappingInheritanceInformation\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addNestedEmbeddedClasses\(\) has parameter \$parentClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:addNestedEmbeddedClasses\(\) has parameter \$subClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:completeIdGeneratorMapping\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:doLoadMetadata\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:doLoadMetadata\(\) has parameter \$parent with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:findAbstractEntityClassesNotListedInDiscriminatorMap\(\) has parameter \$rootEntityClass with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:inheritIdGeneratorMapping\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:inheritIdGeneratorMapping\(\) has parameter \$parent with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:initializeReflection\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:isEntity\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:newClassMetadataInstance\(\) return type with generic class Doctrine\\ORM\\Mapping\\ClassMetadata does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:onNotFoundMetadata\(\) return type with generic class Doctrine\\ORM\\Mapping\\ClassMetadata does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:validateRuntimeMetadata\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:validateRuntimeMetadata\(\) has parameter \$parent with generic interface Doctrine\\Persistence\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:wakeupReflection\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Parameter \#1 \$generator of method Doctrine\\ORM\\Mapping\\ClassMetadata\<object\>\:\:setIdGenerator\(\) expects Doctrine\\ORM\\Id\\AbstractIdGenerator, object given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Mapping/ClassMetadataFactory.php
-
-		-
-			message: '#^Parameter \#1 \$rootEntityClass of static method Doctrine\\ORM\\Mapping\\MappingException\:\:missingInheritanceTypeDeclaration\(\) expects class\-string, class\-string\|false given\.$#'
-			identifier: argument.type
+			message: '#^Property Doctrine\\ORM\\Mapping\\ClassMetadataFactory\:\:\$loadedMetadata \(array\<class\-string, Doctrine\\ORM\\Mapping\\ClassMetadata\<object\>\>\) does not accept array\<class\-string, Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Mapping/ClassMetadataFactory.php
 
@@ -2621,6 +2624,15 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Tools/Console/Command/SchemaTool/UpdateCommand.php
+
+		-
+			message: '''
+				#^Call to deprecated method add\(\) of class Symfony\\Component\\Console\\Application\:
+				since Symfony 7\.4, use Application\:\:addCommand\(\) instead$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: src/Tools/Console/ConsoleRunner.php
 
 		-
 			message: '#^Class Doctrine\\ORM\\Tools\\Console\\MetadataFilter extends generic class FilterIterator but does not specify its types\: TKey, TValue, TIterator$#'
