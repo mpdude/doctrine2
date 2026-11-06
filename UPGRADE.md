@@ -197,19 +197,13 @@ seen in an earlier row was yielded as an incomplete array without its own fields
 Subclasses of `ArrayHydrator` that override the deprecated `hydrateRowData()`
 keep the previous behavior.
 
-## New `Doctrine\ORM\Mapping\ClassMetadataFactoryInterface`
+## BC BREAK: `getMetadataFactory()` now returns `Doctrine\ORM\Mapping\ClassMetadataFactoryInterface`
 
-`ClassMetadataFactory` now implements a new `ClassMetadataFactoryInterface`, the ORM-specific
-contract for a class metadata factory. `EntityManagerInterface::getMetadataFactory()` still
-declares a return type of the concrete `ClassMetadataFactory` class, but a future major version
-will widen it to `ClassMetadataFactoryInterface`. Code that calls `getMetadataFactory()` and
-type-hints the result should switch to `ClassMetadataFactoryInterface` now to prepare for that
-change.
+`EntityManagerInterface::getMetadataFactory()` (and `EntityManager`/`EntityManagerDecorator`) now declare a return type of `ClassMetadataFactoryInterface`, the ORM-specific contract for a class metadata factory, instead of the concrete `ClassMetadataFactory` class. Code that calls `getMetadataFactory()` and type-hints the result against the concrete `ClassMetadataFactory` class must switch to `ClassMetadataFactoryInterface` instead.
 
-This also affects the (rare) case of custom persisters extending `AbstractEntityPersister` or
-`AbstractCollectionPersister`: their protected `$metadataFactory` property will widen to
-`ClassMetadataFactoryInterface` in the same future major version. Subclasses that redeclare this
-property should prepare for that change as well.
+This also affects the (rare) case of custom persisters extending `AbstractEntityPersister` or `AbstractCollectionPersister`: their protected `$metadataFactory` property is now typed as `ClassMetadataFactoryInterface` as well. Subclasses that redeclare this property with the old, concrete `ClassMetadataFactory` type must update it to match.
+
+This change is a prerequisite for an alternative `ClassMetadataFactory` implementation that serves metadata from a pre-built, read-only snapshot (`CompiledClassMetadataFactory`) instead of a mapping driver: since that implementation is not a subtype of the lazy `ClassMetadataFactory`, `getMetadataFactory()` could not otherwise ever return it.
 
 # Upgrade to 3.7
 

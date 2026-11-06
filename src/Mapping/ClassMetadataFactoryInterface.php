@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Doctrine\ORM\Mapping;
 
 use Doctrine\Persistence\Mapping\ClassMetadata as PersistenceClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory as PersistenceClassMetadataFactory;
 use Doctrine\Persistence\Mapping\MappingException;
 use ReflectionException;
 
 /**
  * The ORM-specific contract for a class metadata factory.
+ *
+ * @extends PersistenceClassMetadataFactory<PersistenceClassMetadata<object>>
  */
-interface ClassMetadataFactoryInterface
+interface ClassMetadataFactoryInterface extends PersistenceClassMetadataFactory
 {
     /**
      * Gets metadata of all classes known to the underlying mapping driver.
