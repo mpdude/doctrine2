@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\AssociationMapping;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\ORM\Mapping\ClassMetadataFactoryInterface;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\Persisters\Collection\CollectionPersister;
 use Doctrine\ORM\Proxy\DefaultProxyClassNameResolver;
@@ -28,6 +29,13 @@ use function count;
 abstract class AbstractCollectionPersister implements CachedCollectionPersister
 {
     protected UnitOfWork $uow;
+
+    /**
+     * A future major version will widen this property's type to `ClassMetadataFactoryInterface`;
+     * subclasses redeclaring this property should prepare for that change.
+     *
+     * @var ClassMetadataFactoryInterface
+     */
     protected ClassMetadataFactory $metadataFactory;
     protected ClassMetadata $sourceEntity;
     protected ClassMetadata $targetEntity;

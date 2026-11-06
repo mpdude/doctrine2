@@ -51,7 +51,7 @@ use const PHP_VERSION_ID;
  *
  * @extends AbstractClassMetadataFactory<ClassMetadata>
  */
-class ClassMetadataFactory extends AbstractClassMetadataFactory
+class ClassMetadataFactory extends AbstractClassMetadataFactory implements ClassMetadataFactoryInterface
 {
     private EntityManagerInterface|null $em       = null;
     private AbstractPlatform|null $targetPlatform = null;
@@ -60,6 +60,9 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
 
     /** @var mixed[] */
     private array $embeddablesActiveNesting = [];
+
+    /** @var array<class-string, bool> */
+    private array $transientClasses = [];
 
     private const NON_IDENTITY_DEFAULT_STRATEGY = [
         Platforms\OraclePlatform::class => ClassMetadata::GENERATOR_TYPE_SEQUENCE,
@@ -72,6 +75,24 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
         }
 
         $this->em = $em;
+    }
+
+    /**
+     * Whether this class is mapped by the ORM.
+     *
+     * In addition to non-transient classes (see {@see isTransient()}), this also includes
+     * embedded classes, which provide mapped fields as well.
+     *
+     * @param class-string $className
+     */
+    public function isMapped(string $className): bool
+    {
+        return $this->hasMetadataFor($className) || ! $this->isTransient($className);
+    }
+
+    public function isTransient(string $className): bool
+    {
+        return $this->transientClasses[$className] ??= parent::isTransient($className);
     }
 
     /**
@@ -106,6 +127,22 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
             $owningSide instanceof ManyToOneAssociationMapping);
 
         return $owningSide;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ClassMetadata<object>
+     */
+    public function getMetadataFor(string $className): ClassMetadata
+    {
+        // This override exists only to satisfy PHP's covariant-return-type rule: ClassMetadataFactoryInterface
+        // declares getMetadataFor() to return the ORM's own ClassMetadata, but the inherited implementation from
+        // Doctrine\Persistence\Mapping\AbstractClassMetadataFactory returns the wider, persistence-level
+        // ClassMetadata. It can be removed once ClassMetadataFactory no longer inherits getMetadataFor() from
+        // that base class (e.g. once a future ORM-owned AbstractClassMetadataFactory with narrowly-typed methods
+        // replaces it).
+        return parent::getMetadataFor($className);
     }
 
     protected function initialize(): void
