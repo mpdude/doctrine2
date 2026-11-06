@@ -16,6 +16,8 @@ use Doctrine\Tests\Mocks\EntityManagerMock;
 use Doctrine\Tests\Models\Cache\Country;
 use Doctrine\Tests\Models\Cache\State;
 use Doctrine\Tests\Models\CMS\CmsUser;
+use Doctrine\Tests\Models\DDC117\DDC117Article;
+use Doctrine\Tests\Models\DDC117\DDC117ArticleDetails;
 use Doctrine\Tests\OrmTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use ReflectionMethod;
@@ -247,5 +249,22 @@ class DefaultCacheTest extends OrmTestCase
         $property->setValue($entity, $identifier);
 
         self::assertEquals(['id' => $identifier], $method->invoke($this->cache, $metadata, $identifier));
+    }
+
+    public function testToIdentifierArrayShouldExtractIdentifierFromUnloadedForeignKeyAssociation(): void
+    {
+        $metadata = $this->em->getClassMetadata(DDC117ArticleDetails::class);
+        $method   = new ReflectionMethod($this->cache, 'toIdentifierArray');
+
+        $article    = new DDC117Article('Foo');
+        $idProperty = new ReflectionProperty($article, 'id');
+        $idProperty->setValue($article, 1);
+
+        self::assertFalse(
+            $this->em->getMetadataFactory()->hasMetadataFor(DDC117Article::class),
+            'Precondition: DDC117Article metadata must not have been loaded yet.',
+        );
+
+        self::assertEquals(['article' => 1], $method->invoke($this->cache, $metadata, $article));
     }
 }

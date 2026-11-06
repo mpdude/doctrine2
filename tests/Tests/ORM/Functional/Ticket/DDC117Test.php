@@ -446,4 +446,20 @@ class DDC117Test extends OrmFunctionalTestCase
         self::assertCount(1, $article->getLinks());
         self::assertTrue($article->getLinks()->offsetExists($this->article2->id()));
     }
+
+    #[Group('DDC-117')]
+    public function testFindByForeignKeyIdentifierOnFreshEntityManagerDoesNotCrash(): void
+    {
+        $freshEntityManager = $this->getEntityManager(static::$sharedConn);
+
+        self::assertFalse(
+            $freshEntityManager->getMetadataFactory()->hasMetadataFor(DDC117Article::class),
+            'Precondition: the fresh EntityManager must not have loaded DDC117Article metadata yet.',
+        );
+
+        $articleDetails = $freshEntityManager->find(DDC117ArticleDetails::class, $this->article1);
+
+        self::assertInstanceOf(DDC117ArticleDetails::class, $articleDetails);
+        self::assertEquals('Very long text', $articleDetails->getText());
+    }
 }
