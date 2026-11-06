@@ -310,7 +310,7 @@ class EntityManager implements EntityManagerInterface
         foreach ($id as $i => $value) {
             if (is_object($value)) {
                 $className = DefaultProxyClassNameResolver::getClass($value);
-                if ($this->metadataFactory->hasMetadataFor($className)) {
+                if ($this->metadataFactory->isMapped($className)) {
                     $id[$i] = $this->unitOfWork->getSingleIdentifierValue($value);
 
                     if ($id[$i] === null) {
