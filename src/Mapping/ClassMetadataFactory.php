@@ -75,13 +75,10 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
     }
 
     /**
-     * Whether this factory has, or can load, metadata for the class.
+     * Whether this class is mapped by the ORM.
      *
-     * isTransient() alone is not enough: by contract it is only false for entities and mapped
-     * superclasses, while embeddables also have metadata and are part of the mapped model.
-     * Checking the already loaded metadata first covers those, keeps the common case (metadata
-     * already loaded) a cheap array lookup, and only falls back to isTransient() -- which
-     * dispatches to the mapping driver on every call -- for classes that are not loaded yet.
+     * In addition to non-transient classes (see {@see isTransient()}), this also includes
+     * embedded classes, which provide mapped fields as well.
      *
      * @phpstan-param class-string $className
      */
