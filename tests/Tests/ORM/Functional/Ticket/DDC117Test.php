@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\Tests\ORM\Functional\Ticket;
 
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Tests\Models\DDC117\DDC117ApproveChanges;
 use Doctrine\Tests\Models\DDC117\DDC117Article;
@@ -18,6 +19,7 @@ use PHPUnit\Framework\Attributes\Group;
 
 use function assert;
 use function count;
+use function sprintf;
 
 #[Group('DDC-117')]
 class DDC117Test extends OrmFunctionalTestCase
@@ -461,5 +463,16 @@ class DDC117Test extends OrmFunctionalTestCase
 
         self::assertInstanceOf(DDC117ArticleDetails::class, $articleDetails);
         self::assertEquals('Very long text', $articleDetails->getText());
+    }
+
+    #[Group('DDC-117')]
+    public function testFindByForeignKeyIdentifierRejectsUnpersistedEntity(): void
+    {
+        $unpersistedArticle = new DDC117Article('Unpersisted');
+
+        $this->expectException(ORMInvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Class "%s" does not have an identifier.', DDC117Article::class));
+
+        $this->_em->find(DDC117ArticleDetails::class, $unpersistedArticle);
     }
 }

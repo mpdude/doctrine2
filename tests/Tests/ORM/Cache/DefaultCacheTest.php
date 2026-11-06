@@ -12,6 +12,7 @@ use Doctrine\ORM\Cache\EntityCacheEntry;
 use Doctrine\ORM\Cache\EntityCacheKey;
 use Doctrine\ORM\Cache\QueryCache;
 use Doctrine\ORM\Cache\Region;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Doctrine\Tests\Mocks\EntityManagerMock;
 use Doctrine\Tests\Models\Cache\Country;
 use Doctrine\Tests\Models\Cache\State;
@@ -24,6 +25,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 
 use function array_merge;
+use function sprintf;
 
 #[Group('DDC-2183')]
 class DefaultCacheTest extends OrmTestCase
@@ -266,5 +268,18 @@ class DefaultCacheTest extends OrmTestCase
         );
 
         self::assertEquals(['article' => 1], $method->invoke($this->cache, $metadata, $article));
+    }
+
+    public function testToIdentifierArrayRejectsUnpersistedForeignKeyAssociation(): void
+    {
+        $metadata = $this->em->getClassMetadata(DDC117ArticleDetails::class);
+        $method   = new ReflectionMethod($this->cache, 'toIdentifierArray');
+
+        $unpersistedArticle = new DDC117Article('Foo');
+
+        $this->expectException(ORMInvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Class "%s" does not have an identifier.', DDC117Article::class));
+
+        $method->invoke($this->cache, $metadata, $unpersistedArticle);
     }
 }
