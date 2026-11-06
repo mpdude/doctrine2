@@ -23,6 +23,7 @@ use Doctrine\ORM\Proxy\DefaultProxyClassNameResolver;
 use Doctrine\Persistence\Mapping\AbstractClassMetadataFactory;
 use Doctrine\Persistence\Mapping\ClassMetadata as ClassMetadataInterface;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Persistence\Mapping\MappingException as PersistenceMappingException;
 use Doctrine\Persistence\Mapping\ReflectionService;
 use ReflectionClass;
 use ReflectionException;
@@ -62,7 +63,7 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory implements Class
     private array $embeddablesActiveNesting = [];
 
     /** @var array<class-string, bool> */
-    private array $transientClasses = [];
+    private array $mappedClasses = [];
 
     private const NON_IDENTITY_DEFAULT_STRATEGY = [
         Platforms\OraclePlatform::class => ClassMetadata::GENERATOR_TYPE_SEQUENCE,
@@ -87,12 +88,29 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory implements Class
      */
     public function isMapped(string $className): bool
     {
-        return $this->hasMetadataFor($className) || ! $this->isTransient($className);
+        /*
+            With the current state of drivers, finding a reliable answer with regard to Embeddable classes would be to do a full,
+            expensive metadata loading attempt. So, try to shortcut this as much as possible by caching the result, referring to the
+            cache of already-loaded metadata and separating transient classes (a rather simple class attribute check in the best case)
+            before falling through to the load attempt as a last resort.
+        */
+
+        return $this->mappedClasses[$className]
+            ??= $this->hasMetadataFor($className)
+            || ! $this->isTransient($className)
+            || $this->canLoadMetadataFor($className);
     }
 
-    public function isTransient(string $className): bool
+    /** @param class-string $className */
+    private function canLoadMetadataFor(string $className): bool
     {
-        return $this->transientClasses[$className] ??= parent::isTransient($className);
+        try {
+            $this->getMetadataFor($className);
+
+            return true;
+        } catch (PersistenceMappingException) {
+            return false;
+        }
     }
 
     /**
@@ -127,22 +145,6 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory implements Class
             $owningSide instanceof ManyToOneAssociationMapping);
 
         return $owningSide;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return ClassMetadata<object>
-     */
-    public function getMetadataFor(string $className): ClassMetadata
-    {
-        // This override exists only to satisfy PHP's covariant-return-type rule: ClassMetadataFactoryInterface
-        // declares getMetadataFor() to return the ORM's own ClassMetadata, but the inherited implementation from
-        // Doctrine\Persistence\Mapping\AbstractClassMetadataFactory returns the wider, persistence-level
-        // ClassMetadata. It can be removed once ClassMetadataFactory no longer inherits getMetadataFor() from
-        // that base class (e.g. once a future ORM-owned AbstractClassMetadataFactory with narrowly-typed methods
-        // replaces it).
-        return parent::getMetadataFor($className);
     }
 
     protected function initialize(): void

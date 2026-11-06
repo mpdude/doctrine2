@@ -20,7 +20,6 @@ use Doctrine\ORM\Exception\UnrecognizedIdentifierFields;
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
-use Doctrine\ORM\Mapping\ClassMetadataFactoryInterface;
 use Doctrine\ORM\Proxy\DefaultProxyClassNameResolver;
 use Doctrine\ORM\Proxy\ProxyFactory;
 use Doctrine\ORM\Query\Expr;
@@ -166,8 +165,6 @@ class EntityManager implements EntityManagerInterface
      * A future major version will widen this method's return type to
      * `ClassMetadataFactoryInterface`; type-hint against that interface instead to
      * prepare for the change.
-     *
-     * @return ClassMetadataFactoryInterface
      */
     public function getMetadataFactory(): ClassMetadataFactory
     {
@@ -230,6 +227,8 @@ class EntityManager implements EntityManagerInterface
      * Internal note: Performance-sensitive method.
      *
      * {@inheritDoc}
+     *
+     * @param class-string $className
      */
     public function getClassMetadata(string $className): Mapping\ClassMetadata
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\ORM\Mapping;
 
+use Doctrine\Persistence\Mapping\ClassMetadata as PersistenceClassMetadata;
 use Doctrine\Persistence\Mapping\MappingException;
 use ReflectionException;
 
@@ -29,7 +30,7 @@ interface ClassMetadataFactoryInterface
      * @throws MappingException
      * @throws ReflectionException
      */
-    public function getMetadataFor(string $className): ClassMetadata;
+    public function getMetadataFor(string $className): PersistenceClassMetadata;
 
     /**
      * Whether this class is mapped by the ORM.

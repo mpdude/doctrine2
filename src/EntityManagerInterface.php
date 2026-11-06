@@ -11,7 +11,6 @@ use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
-use Doctrine\ORM\Mapping\ClassMetadataFactoryInterface;
 use Doctrine\ORM\Proxy\ProxyFactory;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\FilterCollection;
@@ -49,8 +48,6 @@ interface EntityManagerInterface extends ObjectManager
      *
      * A future major version will widen this method's return type to `ClassMetadataFactoryInterface`;
      * type-hint against that interface instead to prepare for the change.
-     *
-     * @return ClassMetadataFactoryInterface
      */
     public function getMetadataFactory(): ClassMetadataFactory;
 
