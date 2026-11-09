@@ -22,7 +22,6 @@ use Doctrine\ORM\Mapping\Exception\UnknownGeneratorType;
 use Doctrine\ORM\Proxy\DefaultProxyClassNameResolver;
 use Doctrine\ORM\Utility\OwningSideResolver;
 use Doctrine\Persistence\Mapping\ClassMetadata as ClassMetadataInterface;
-use Doctrine\Persistence\Mapping\ClassMetadataFactory as PersistenceClassMetadataFactory;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Persistence\Mapping\ProxyClassNameResolver;
 use Doctrine\Persistence\Mapping\ReflectionService;
@@ -55,7 +54,7 @@ use const PHP_VERSION_ID;
  * Shared driver access, inheritance resolution and embedded-class handling for the "lazy"
  * {@see ClassMetadataFactory}, {@see ClassMetadataBagCompiler} and {@see CompiledClassMetadataFactory}.
  */
-abstract class AbstractClassMetadataFactory implements PersistenceClassMetadataFactory, ClassMetadataFactoryInterface
+abstract class AbstractClassMetadataFactory implements ClassMetadataFactoryInterface
 {
     protected bool $initialized = false;
 

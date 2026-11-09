@@ -511,13 +511,13 @@ parameters:
 			path: src/Decorator/EntityManagerDecorator.php
 
 		-
-			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactory\) of method Doctrine\\ORM\\Decorator\\EntityManagerDecorator\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManager\:\:getMetadataFactory\(\)$#'
+			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactoryInterface\) of method Doctrine\\ORM\\Decorator\\EntityManagerDecorator\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManager\:\:getMetadataFactory\(\)$#'
 			identifier: method.childReturnType
 			count: 1
 			path: src/Decorator/EntityManagerDecorator.php
 
 		-
-			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactory\) of method Doctrine\\ORM\\Decorator\\EntityManagerDecorator\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManagerDecorator\<Doctrine\\ORM\\EntityManagerInterface\>\:\:getMetadataFactory\(\)$#'
+			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactoryInterface\) of method Doctrine\\ORM\\Decorator\\EntityManagerDecorator\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManagerDecorator\<Doctrine\\ORM\\EntityManagerInterface\>\:\:getMetadataFactory\(\)$#'
 			identifier: method.childReturnType
 			count: 1
 			path: src/Decorator/EntityManagerDecorator.php
@@ -559,13 +559,13 @@ parameters:
 			path: src/EntityManager.php
 
 		-
-			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactory\) of method Doctrine\\ORM\\EntityManager\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManager\:\:getMetadataFactory\(\)$#'
+			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactoryInterface\) of method Doctrine\\ORM\\EntityManager\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManager\:\:getMetadataFactory\(\)$#'
 			identifier: method.childReturnType
 			count: 1
 			path: src/EntityManager.php
 
 		-
-			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactory\) of method Doctrine\\ORM\\EntityManagerInterface\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManager\:\:getMetadataFactory\(\)$#'
+			message: '#^Return type \(Doctrine\\ORM\\Mapping\\ClassMetadataFactoryInterface\) of method Doctrine\\ORM\\EntityManagerInterface\:\:getMetadataFactory\(\) should be compatible with return type \(Doctrine\\Persistence\\Mapping\\ClassMetadataFactory\<Doctrine\\Persistence\\Mapping\\ClassMetadata\<object\>\>\) of method Doctrine\\Persistence\\ObjectManager\:\:getMetadataFactory\(\)$#'
 			identifier: method.childReturnType
 			count: 1
 			path: src/EntityManagerInterface.php
@@ -799,13 +799,7 @@ parameters:
 			path: src/Internal/StronglyConnectedComponents.php
 
 		-
-			message: '#^Class Doctrine\\ORM\\Mapping\\AbstractClassMetadataFactory implements generic interface Doctrine\\Persistence\\Mapping\\ClassMetadataFactory but does not specify its types\: T$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Mapping/AbstractClassMetadataFactory.php
-
-		-
-			message: '#^Method Doctrine\\Persistence\\Mapping\\ProxyClassNameResolver@anonymous/src/Mapping/AbstractClassMetadataFactory\.php\:103\:\:resolveClassName\(\) should return class\-string but returns string\.$#'
+			message: '#^Method Doctrine\\Persistence\\Mapping\\ProxyClassNameResolver@anonymous/src/Mapping/AbstractClassMetadataFactory\.php\:102\:\:resolveClassName\(\) should return class\-string but returns string\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Mapping/AbstractClassMetadataFactory.php
