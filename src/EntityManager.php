@@ -18,8 +18,12 @@ use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Exception\UnrecognizedIdentifierFields;
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
+use Doctrine\ORM\Mapping\AbstractClassMetadataFactory;
+use Doctrine\ORM\Mapping\Cache\FileClassMetadatasCache;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\ORM\Mapping\ClassMetadataFactoryInterface;
+use Doctrine\ORM\Mapping\CompiledClassMetadataFactory;
 use Doctrine\ORM\Proxy\DefaultProxyClassNameResolver;
 use Doctrine\ORM\Proxy\ProxyFactory;
 use Doctrine\ORM\Query\Expr;
@@ -28,6 +32,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Repository\RepositoryFactory;
 
 use function array_keys;
+use function assert;
 use function is_array;
 use function is_object;
 use function ltrim;
@@ -64,7 +69,7 @@ class EntityManager implements EntityManagerInterface
     /**
      * The metadata factory, used to retrieve the ORM metadata of entity classes.
      */
-    private ClassMetadataFactory $metadataFactory;
+    private ClassMetadataFactoryInterface $metadataFactory;
 
     /**
      * The UnitOfWork used to coordinate object-level transactions.
@@ -129,10 +134,14 @@ class EntityManager implements EntityManagerInterface
 
         $metadataFactoryClassName = $config->getClassMetadataFactoryName();
 
-        $this->metadataFactory = new $metadataFactoryClassName();
-        $this->metadataFactory->setEntityManager($this);
+        $metadataFactory = new $metadataFactoryClassName();
+        assert($metadataFactory instanceof AbstractClassMetadataFactory);
+        $metadataFactory->setEntityManager($this);
+
+        $this->metadataFactory = $metadataFactory;
 
         $this->configureMetadataCache();
+        $this->configureCompiledMetadataCache();
 
         $this->repositoryFactory = $config->getRepositoryFactory();
         $this->unitOfWork        = new UnitOfWork($this);
@@ -161,12 +170,8 @@ class EntityManager implements EntityManagerInterface
 
     /**
      * Gets the metadata factory used to gather the metadata of classes.
-     *
-     * A future major version will widen this method's return type to
-     * `ClassMetadataFactoryInterface`; type-hint against that interface instead to
-     * prepare for the change.
      */
-    public function getMetadataFactory(): ClassMetadataFactory
+    public function getMetadataFactory(): ClassMetadataFactoryInterface
     {
         return $this->metadataFactory;
     }
@@ -645,11 +650,21 @@ class EntityManager implements EntityManagerInterface
     private function configureMetadataCache(): void
     {
         $metadataCache = $this->config->getMetadataCache();
-        if (! $metadataCache) {
+        if (! $metadataCache || ! $this->metadataFactory instanceof ClassMetadataFactory) {
             return;
         }
 
         $this->metadataFactory->setCache($metadataCache);
+    }
+
+    private function configureCompiledMetadataCache(): void
+    {
+        $cacheDir = $this->config->getMetadataCacheDir();
+        if ($cacheDir === null || ! $this->metadataFactory instanceof CompiledClassMetadataFactory) {
+            return;
+        }
+
+        $this->metadataFactory->setCache(new FileClassMetadatasCache($cacheDir));
     }
 
     private function createCustomHydrator(string $hydrationMode): AbstractHydrator

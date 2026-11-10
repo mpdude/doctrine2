@@ -212,6 +212,14 @@ This also affects the (rare) case of custom persisters extending `AbstractEntity
 value can accept `ClassMetadataFactoryInterface` already now. Subclasses that redeclare the
 property must keep `ClassMetadataFactory` until the parent property's type changes.
 
+## BC BREAK: `getMetadataFactory()` now returns `Doctrine\ORM\Mapping\ClassMetadataFactoryInterface`
+
+`EntityManagerInterface::getMetadataFactory()` (and `EntityManager`/`EntityManagerDecorator`) now declare a return type of `ClassMetadataFactoryInterface`, the ORM-specific contract for a class metadata factory, instead of the concrete `ClassMetadataFactory` class. Code that calls `getMetadataFactory()` and type-hints the result against the concrete `ClassMetadataFactory` class must switch to `ClassMetadataFactoryInterface` instead.
+
+This also affects the (rare) case of custom persisters extending `AbstractEntityPersister` or `AbstractCollectionPersister`: their protected `$metadataFactory` property is now typed as `ClassMetadataFactoryInterface` as well. Subclasses that redeclare this property with the old, concrete `ClassMetadataFactory` type must update it to match.
+
+This change is a prerequisite for an alternative `ClassMetadataFactory` implementation that serves metadata from a pre-built, read-only snapshot (`CompiledClassMetadataFactory`) instead of a mapping driver: since that implementation is not a subtype of the lazy `ClassMetadataFactory`, `getMetadataFactory()` could not otherwise ever return it.
+
 ## Deprecated `ClassMetadataFactory::getOwningSide()`
 
 Resolving an association's owning side moves out of the metadata factory and
