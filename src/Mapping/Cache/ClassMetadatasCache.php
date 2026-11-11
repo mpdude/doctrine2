@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping\ReadonlyClassMetadataBag;
  * \Doctrine\ORM\Mapping\CompiledClassMetadataFactory}. An implementation decides on its own how
  * (or whether) it splits the snapshot across multiple storage units internally; this contract
  * only ever deals in whole snapshots.
+ *
+ * @internal
  */
 interface ClassMetadatasCache
 {

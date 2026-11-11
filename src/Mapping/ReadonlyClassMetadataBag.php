@@ -9,6 +9,12 @@ use Doctrine\Persistence\Mapping\ReflectionService;
 
 use function sprintf;
 
+/**
+ * Produced by {@see ClassMetadataBagCompiler} and {@see \Doctrine\ORM\Mapping\Cache\ClassMetadatasCache}
+ * implementations.
+ *
+ * @internal
+ */
 final class ReadonlyClassMetadataBag implements ClassMetadataBag
 {
     /** @param array<class-string, ClassMetadata<object>> $classMetadata */

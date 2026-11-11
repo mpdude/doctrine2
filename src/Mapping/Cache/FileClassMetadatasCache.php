@@ -12,6 +12,8 @@ use Symfony\Component\VarExporter\VarExporter;
  * Stores a complete {@see ReadonlyClassMetadataBag} snapshot as a single, opcache-friendly PHP file in the
  * given directory.
  *
+ * @internal
+ *
  * @todo For now, no cache revalidation is implemented.
  */
 final class FileClassMetadatasCache implements ClassMetadatasCache
