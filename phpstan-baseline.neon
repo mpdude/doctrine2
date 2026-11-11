@@ -799,7 +799,7 @@ parameters:
 			path: src/Internal/StronglyConnectedComponents.php
 
 		-
-			message: '#^Method Doctrine\\Persistence\\Mapping\\ProxyClassNameResolver@anonymous/src/Mapping/AbstractClassMetadataFactory\.php\:112\:\:resolveClassName\(\) should return class\-string but returns string\.$#'
+			message: '#^Method Doctrine\\Persistence\\Mapping\\ProxyClassNameResolver@anonymous/src/Mapping/AbstractClassMetadataFactory\.php\:104\:\:resolveClassName\(\) should return class\-string but returns string\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Mapping/AbstractClassMetadataFactory.php
