@@ -26,6 +26,9 @@ use function str_contains;
  *     method of {@see ClassMetadataFactory} is overridden; its own driver/PSR-6-cache machinery is
  *     unused. Once that return type can widen to {@see ClassMetadataFactoryInterface} in a future
  *     major version, this should extend {@see AbstractClassMetadataFactory} directly instead.
+ *     Being internal, this class cannot be named through
+ *     {@see \Doctrine\ORM\Configuration::setClassMetadataFactoryName()}; EntityManager instantiates
+ *     it directly once {@see \Doctrine\ORM\Configuration::setMetadataCacheDir()} is configured.
  */
 final class CompiledClassMetadataFactory extends ClassMetadataFactory
 {

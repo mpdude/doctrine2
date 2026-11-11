@@ -129,13 +129,10 @@ class EntityManager implements EntityManagerInterface
                 : new EventManager()
             );
 
-        $metadataFactoryClassName = $config->getClassMetadataFactoryName();
-
-        $this->metadataFactory = new $metadataFactoryClassName();
+        $this->metadataFactory = $this->createMetadataFactory($config);
         $this->metadataFactory->setEntityManager($this);
 
         $this->configureMetadataCache();
-        $this->configureCompiledMetadataCache();
 
         $this->repositoryFactory = $config->getRepositoryFactory();
         $this->unitOfWork        = new UnitOfWork($this);
@@ -645,6 +642,26 @@ class EntityManager implements EntityManagerInterface
         }
     }
 
+    /**
+     * CompiledClassMetadataFactory is @internal and therefore cannot be named via
+     * Configuration::setClassMetadataFactoryName(). Configuring a metadata cache directory is the
+     * supported way to opt into it; doing so takes precedence over any configured factory class.
+     */
+    private function createMetadataFactory(Configuration $config): ClassMetadataFactory
+    {
+        $cacheDir = $config->getMetadataCacheDir();
+        if ($cacheDir === null) {
+            $metadataFactoryClassName = $config->getClassMetadataFactoryName();
+
+            return new $metadataFactoryClassName();
+        }
+
+        $metadataFactory = new CompiledClassMetadataFactory();
+        $metadataFactory->setSnapshotCache(new FileClassMetadatasCache($cacheDir));
+
+        return $metadataFactory;
+    }
+
     private function configureMetadataCache(): void
     {
         $metadataCache = $this->config->getMetadataCache();
@@ -653,16 +670,6 @@ class EntityManager implements EntityManagerInterface
         }
 
         $this->metadataFactory->setCache($metadataCache);
-    }
-
-    private function configureCompiledMetadataCache(): void
-    {
-        $cacheDir = $this->config->getMetadataCacheDir();
-        if ($cacheDir === null || ! $this->metadataFactory instanceof CompiledClassMetadataFactory) {
-            return;
-        }
-
-        $this->metadataFactory->setSnapshotCache(new FileClassMetadatasCache($cacheDir));
     }
 
     private function createCustomHydrator(string $hydrationMode): AbstractHydrator

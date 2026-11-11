@@ -264,6 +264,12 @@ class Configuration extends \Doctrine\DBAL\Configuration
         return $this->attributes['metadataCacheDir'] ?? null;
     }
 
+    /**
+     * Switches the EntityManager to a compiled, read-only class metadata factory that serves
+     * metadata from a snapshot stored in $dir, built ahead of time via the orm:metadata:compile
+     * console command. This takes precedence over any factory class configured through
+     * {@see setClassMetadataFactoryName()}.
+     */
     public function setMetadataCacheDir(string $dir): void
     {
         $this->attributes['metadataCacheDir'] = $dir;
