@@ -799,6 +799,12 @@ parameters:
 			path: src/Internal/StronglyConnectedComponents.php
 
 		-
+			message: '#^Method Doctrine\\Persistence\\Mapping\\ProxyClassNameResolver@anonymous/src/Mapping/AbstractClassMetadataFactory\.php\:112\:\:resolveClassName\(\) should return class\-string but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Mapping/AbstractClassMetadataFactory.php
+
+		-
 			message: '#^Parameter \#1 \$generator of method Doctrine\\ORM\\Mapping\\ClassMetadata\<object\>\:\:setIdGenerator\(\) expects Doctrine\\ORM\\Id\\AbstractIdGenerator, object given\.$#'
 			identifier: argument.type
 			count: 1

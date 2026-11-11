@@ -24,7 +24,9 @@ use Doctrine\ORM\Utility\OwningSideResolver;
 use Doctrine\Persistence\Mapping\AbstractClassMetadataFactory as PersistenceAbstractClassMetadataFactory;
 use Doctrine\Persistence\Mapping\ClassMetadata as ClassMetadataInterface;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Persistence\Mapping\ProxyClassNameResolver;
 use Doctrine\Persistence\Mapping\ReflectionService;
+use Doctrine\Persistence\Proxy;
 use ReflectionClass;
 use ReflectionException;
 
@@ -37,9 +39,11 @@ use function in_array;
 use function is_a;
 use function is_int;
 use function is_subclass_of;
+use function ltrim;
 use function method_exists;
 use function str_contains;
 use function strlen;
+use function strrpos;
 use function strtolower;
 use function substr;
 
@@ -51,7 +55,12 @@ use const PHP_VERSION_ID;
  *
  * Still extends {@see Doctrine\Persistence\Mapping\AbstractClassMetadataFactory} for now, so
  * {@see ClassMetadataFactory}'s lazy, PSR-6-caching behavior keeps working unchanged: nothing in
- * this class re-implements it.
+ * this class re-implements it. The one exception is proxy-class-name resolution: the persistence
+ * base class keeps that private for its own, internal use, so an alternative implementation that
+ * doesn't go through its inherited `getMetadataFor()` (and therefore needs to resolve a possibly
+ * proxied class name itself) cannot reach it through inheritance. {@see getRealClass()} and its
+ * supporting members re-implement that one piece, duplicating persistence's own logic, so such an
+ * implementation has a protected entry point to call.
  *
  * @internal
  *
@@ -64,6 +73,8 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
     private MappingDriver|null $driver            = null;
     private EventDispatcher|null $eventDispatcher = null;
 
+    private ProxyClassNameResolver|null $proxyClassNameResolver = null;
+
     /** @var mixed[] */
     private array $embeddablesActiveNesting = [];
 
@@ -71,10 +82,68 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
         Platforms\OraclePlatform::class => ClassMetadata::GENERATOR_TYPE_SEQUENCE,
     ];
 
+    public function setProxyClassNameResolver(ProxyClassNameResolver $resolver): void
+    {
+        $this->proxyClassNameResolver = $resolver;
+
+        parent::setProxyClassNameResolver($resolver);
+    }
+
+    /**
+     * Gets the real class name of a class name that could be a proxy.
+     *
+     * @param class-string $class
+     *
+     * @return class-string
+     */
+    protected function getRealClass(string $class): string
+    {
+        if ($this->proxyClassNameResolver === null) {
+            $this->createDefaultProxyClassNameResolver();
+        }
+
+        assert($this->proxyClassNameResolver !== null);
+
+        return $this->proxyClassNameResolver->resolveClassName($class);
+    }
+
+    private function createDefaultProxyClassNameResolver(): void
+    {
+        $this->setProxyClassNameResolver(new class implements ProxyClassNameResolver {
+            /**
+             * @param class-string $className
+             *
+             * @return class-string
+             */
+            public function resolveClassName(string $className): string
+            {
+                $pos = strrpos($className, '\\' . Proxy::MARKER . '\\');
+
+                if ($pos === false) {
+                    return $className;
+                }
+
+                return substr($className, $pos + Proxy::MARKER_LENGTH + 2);
+            }
+        });
+    }
+
+    /**
+     * Removes the prepended backslash of a class string to conform with how php outputs class names.
+     *
+     * @param class-string $className
+     *
+     * @return class-string
+     */
+    protected function normalizeClassName(string $className): string
+    {
+        return ltrim($className, '\\');
+    }
+
     public function setEntityManager(EntityManagerInterface $em): void
     {
         if (! $em->getConfiguration()->isNativeLazyObjectsEnabled()) {
-            parent::setProxyClassNameResolver(new DefaultProxyClassNameResolver());
+            $this->setProxyClassNameResolver(new DefaultProxyClassNameResolver());
         }
 
         $this->em = $em;
