@@ -149,6 +149,13 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
         $this->em = $em;
     }
 
+    protected function getEntityManager(): EntityManagerInterface
+    {
+        assert($this->em !== null);
+
+        return $this->em;
+    }
+
     /**
      * @deprecated Use {@see OwningSideResolver::resolve()} instead.
      *
