@@ -654,7 +654,7 @@ class EntityManager implements EntityManagerInterface
         }
 
         $metadataFactory = new CompiledClassMetadataFactory();
-        $metadataFactory->setSnapshotCache(new FileClassMetadatasCache($cacheDir));
+        $metadataFactory->setCache(new FileClassMetadatasCache($cacheDir));
 
         return $metadataFactory;
     }

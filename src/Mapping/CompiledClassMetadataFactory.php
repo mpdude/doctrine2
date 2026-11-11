@@ -20,17 +20,11 @@ use function str_contains;
  * the snapshot is complete and read-only; this class itself never touches
  * the mapping driver.
  *
- * @internal Extends {@see ClassMetadataFactory} instead of {@see AbstractClassMetadataFactory}
- *     only so that {@see \Doctrine\ORM\EntityManagerInterface::getMetadataFactory()} can return an
- *     instance without widening its return type, which would be a breaking change. Every public
- *     method of {@see ClassMetadataFactory} is overridden; its own driver/PSR-6-cache machinery is
- *     unused. Once that return type can widen to {@see ClassMetadataFactoryInterface} in a future
- *     major version, this should extend {@see AbstractClassMetadataFactory} directly instead.
- *     Being internal, this class cannot be named through
+ * @internal Being internal, this class cannot be named through
  *     {@see \Doctrine\ORM\Configuration::setClassMetadataFactoryName()}; EntityManager instantiates
  *     it directly once {@see \Doctrine\ORM\Configuration::setMetadataCacheDir()} is configured.
  */
-final class CompiledClassMetadataFactory extends ClassMetadataFactory
+final class CompiledClassMetadataFactory extends AbstractClassMetadataFactory
 {
     private ClassMetadataBag|null $classMetadatas = null;
 
@@ -49,7 +43,7 @@ final class CompiledClassMetadataFactory extends ClassMetadataFactory
      * Without an injected cache, {@see getClassMetadatas()} builds its snapshot ad hoc on first
      * use and forgets it again once this factory instance is discarded.
      */
-    public function setSnapshotCache(ClassMetadatasCache $cache): void
+    public function setCache(ClassMetadatasCache $cache): void
     {
         $this->cache = $cache;
     }
