@@ -18,8 +18,10 @@ use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Exception\UnrecognizedIdentifierFields;
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
+use Doctrine\ORM\Mapping\Cache\FileClassMetadatasCache;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\ORM\Mapping\CompiledClassMetadataFactory;
 use Doctrine\ORM\Proxy\DefaultProxyClassNameResolver;
 use Doctrine\ORM\Proxy\ProxyFactory;
 use Doctrine\ORM\Query\Expr;
@@ -127,9 +129,7 @@ class EntityManager implements EntityManagerInterface
                 : new EventManager()
             );
 
-        $metadataFactoryClassName = $config->getClassMetadataFactoryName();
-
-        $this->metadataFactory = new $metadataFactoryClassName();
+        $this->metadataFactory = $this->createMetadataFactory($config);
         $this->metadataFactory->setEntityManager($this);
 
         $this->configureMetadataCache();
@@ -640,6 +640,26 @@ class EntityManager implements EntityManagerInterface
                     throw TransactionRequiredException::transactionRequired();
                 }
         }
+    }
+
+    /**
+     * CompiledClassMetadataFactory is @internal and therefore cannot be named via
+     * Configuration::setClassMetadataFactoryName(). Configuring a metadata cache directory is the
+     * supported way to opt into it; doing so takes precedence over any configured factory class.
+     */
+    private function createMetadataFactory(Configuration $config): ClassMetadataFactory
+    {
+        $cacheDir = $config->getMetadataCacheDir();
+        if ($cacheDir === null) {
+            $metadataFactoryClassName = $config->getClassMetadataFactoryName();
+
+            return new $metadataFactoryClassName();
+        }
+
+        $metadataFactory = new CompiledClassMetadataFactory();
+        $metadataFactory->setSnapshotCache(new FileClassMetadatasCache($cacheDir));
+
+        return $metadataFactory;
     }
 
     private function configureMetadataCache(): void
