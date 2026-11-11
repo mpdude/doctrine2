@@ -21,15 +21,16 @@ use Doctrine\ORM\Mapping\Exception\InvalidCustomGenerator;
 use Doctrine\ORM\Mapping\Exception\UnknownGeneratorType;
 use Doctrine\ORM\Proxy\DefaultProxyClassNameResolver;
 use Doctrine\ORM\Utility\OwningSideResolver;
-use Doctrine\Persistence\Mapping\AbstractClassMetadataFactory as PersistenceAbstractClassMetadataFactory;
 use Doctrine\Persistence\Mapping\ClassMetadata as ClassMetadataInterface;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Persistence\Mapping\ProxyClassNameResolver;
 use Doctrine\Persistence\Mapping\ReflectionService;
+use Doctrine\Persistence\Mapping\RuntimeReflectionService;
 use Doctrine\Persistence\Proxy;
 use ReflectionClass;
 use ReflectionException;
 
+use function array_reverse;
 use function assert;
 use function class_exists;
 use function count;
@@ -50,23 +51,12 @@ use function substr;
 use const PHP_VERSION_ID;
 
 /**
- * Shared driver access, inheritance resolution and embedded-class handling for
- * {@see ClassMetadataFactory} and any future alternative implementation.
- *
- * Still extends {@see Doctrine\Persistence\Mapping\AbstractClassMetadataFactory} for now, so
- * {@see ClassMetadataFactory}'s lazy, PSR-6-caching behavior keeps working unchanged: nothing in
- * this class re-implements it. The one exception is proxy-class-name resolution: the persistence
- * base class keeps that private for its own, internal use, so an alternative implementation that
- * doesn't go through its inherited `getMetadataFor()` (and therefore needs to resolve a possibly
- * proxied class name itself) cannot reach it through inheritance. {@see getRealClass()} and its
- * supporting members re-implement that one piece, duplicating persistence's own logic, so such an
- * implementation has a protected entry point to call.
+ * Shared driver access, reflection service, inheritance resolution and embedded-class handling
+ * for {@see ClassMetadataFactory} and any other implementation, e.g. a compiled, read-only one.
  *
  * @internal
- *
- * @extends PersistenceAbstractClassMetadataFactory<ClassMetadata<object>>
  */
-abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMetadataFactory implements ClassMetadataFactoryInterface
+abstract class AbstractClassMetadataFactory implements ClassMetadataFactoryInterface
 {
     private EntityManagerInterface|null $em       = null;
     private AbstractPlatform|null $targetPlatform = null;
@@ -74,6 +64,10 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
     private EventDispatcher|null $eventDispatcher = null;
 
     private ProxyClassNameResolver|null $proxyClassNameResolver = null;
+
+    private ReflectionService|null $reflectionService = null;
+
+    protected bool $initialized = false;
 
     /** @var mixed[] */
     private array $embeddablesActiveNesting = [];
@@ -85,8 +79,6 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
     public function setProxyClassNameResolver(ProxyClassNameResolver $resolver): void
     {
         $this->proxyClassNameResolver = $resolver;
-
-        parent::setProxyClassNameResolver($resolver);
     }
 
     /**
@@ -156,6 +148,43 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
         return $this->em;
     }
 
+    public function setReflectionService(ReflectionService $reflectionService): void
+    {
+        $this->reflectionService = $reflectionService;
+    }
+
+    public function getReflectionService(): ReflectionService
+    {
+        if ($this->reflectionService === null) {
+            $this->reflectionService = new RuntimeReflectionService();
+        }
+
+        return $this->reflectionService;
+    }
+
+    /**
+     * Gets an array of parent classes for the given entity class, ignoring transient (not-mapped)
+     * classes.
+     *
+     * @param class-string $name
+     *
+     * @return list<class-string>
+     */
+    protected function getParentClasses(string $name): array
+    {
+        $parentClasses = [];
+
+        foreach (array_reverse($this->getReflectionService()->getParentClasses($name)) as $parentClass) {
+            if ($this->getDriver()->isTransient($parentClass)) {
+                continue;
+            }
+
+            $parentClasses[] = $parentClass;
+        }
+
+        return $parentClasses;
+    }
+
     /**
      * @deprecated Use {@see OwningSideResolver::resolve()} instead.
      *
@@ -190,6 +219,7 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
         $this->initialized     = true;
     }
 
+    /** @return ClassMetadata<object>|null */
     protected function onNotFoundMetadata(string $className): ClassMetadata|null
     {
         $eventArgs = new OnClassMetadataNotFoundEventArgs($className, $this->em);
@@ -202,11 +232,19 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
     }
 
     /**
-     * {@inheritDoc}
+     * Actually loads the metadata from the underlying metadata.
+     *
+     * @param ClassMetadata<object>      $class
+     * @param ClassMetadata<object>|null $parent
+     * @param bool                       $rootEntityFound      True when there is another entity
+     *     (non-mapped superclass) class above the current class in the PHP class hierarchy.
+     * @param list<class-string>         $nonSuperclassParents All parent class names that are not
+     *     marked as mapped superclasses, with the direct parent class being the first and the
+     *     root entity class the last element.
      */
     protected function doLoadMetadata(
-        ClassMetadataInterface $class,
-        ClassMetadataInterface|null $parent,
+        ClassMetadata $class,
+        ClassMetadata|null $parent,
         bool $rootEntityFound,
         array $nonSuperclassParents,
     ): void {
@@ -377,6 +415,13 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
         }
     }
 
+    /**
+     * @param class-string<T> $className
+     *
+     * @return ClassMetadata<T>
+     *
+     * @template T of object
+     */
     protected function newClassMetadataInstance(string $className): ClassMetadata
     {
         return new ClassMetadata(
@@ -827,7 +872,8 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
         }
     }
 
-    protected function wakeupReflection(ClassMetadataInterface $class, ReflectionService $reflService): void
+    /** @param ClassMetadata<object> $class */
+    protected function wakeupReflection(ClassMetadata $class, ReflectionService $reflService): void
     {
         $class->wakeupReflection($reflService);
 
@@ -844,7 +890,8 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
         }
     }
 
-    protected function initializeReflection(ClassMetadataInterface $class, ReflectionService $reflService): void
+    /** @param ClassMetadata<object> $class */
+    protected function initializeReflection(ClassMetadata $class, ReflectionService $reflService): void
     {
         $class->initializeReflection($reflService);
     }
@@ -856,7 +903,8 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
         return $this->driver;
     }
 
-    protected function isEntity(ClassMetadataInterface $class): bool
+    /** @param ClassMetadata<object> $class */
+    protected function isEntity(ClassMetadata $class): bool
     {
         return ! $class->isMappedSuperclass;
     }
@@ -872,4 +920,15 @@ abstract class AbstractClassMetadataFactory extends PersistenceAbstractClassMeta
 
     /** @param class-string $className */
     abstract public function isMapped(string $className): bool;
+
+    /** @return list<ClassMetadata<object>> */
+    abstract public function getAllMetadata(): array;
+
+    abstract public function getMetadataFor(string $className): ClassMetadata;
+
+    abstract public function hasMetadataFor(string $className): bool;
+
+    abstract public function setMetadataFor(string $className, ClassMetadataInterface $class): void;
+
+    abstract public function isTransient(string $className): bool;
 }

@@ -21,6 +21,7 @@ use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
 use Doctrine\ORM\Mapping\Cache\FileClassMetadatasCache;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\ORM\Mapping\ClassMetadataFactoryInterface;
 use Doctrine\ORM\Mapping\CompiledClassMetadataFactory;
 use Doctrine\ORM\Proxy\DefaultProxyClassNameResolver;
 use Doctrine\ORM\Proxy\ProxyFactory;
@@ -66,7 +67,7 @@ class EntityManager implements EntityManagerInterface
     /**
      * The metadata factory, used to retrieve the ORM metadata of entity classes.
      */
-    private ClassMetadataFactory $metadataFactory;
+    private ClassMetadataFactoryInterface $metadataFactory;
 
     /**
      * The UnitOfWork used to coordinate object-level transactions.
@@ -161,12 +162,8 @@ class EntityManager implements EntityManagerInterface
 
     /**
      * Gets the metadata factory used to gather the metadata of classes.
-     *
-     * A future major version will widen this method's return type to
-     * `ClassMetadataFactoryInterface`; type-hint against that interface instead to
-     * prepare for the change.
      */
-    public function getMetadataFactory(): ClassMetadataFactory
+    public function getMetadataFactory(): ClassMetadataFactoryInterface
     {
         return $this->metadataFactory;
     }
@@ -647,7 +644,7 @@ class EntityManager implements EntityManagerInterface
      * Configuration::setClassMetadataFactoryName(). Configuring a metadata cache directory is the
      * supported way to opt into it; doing so takes precedence over any configured factory class.
      */
-    private function createMetadataFactory(Configuration $config): ClassMetadataFactory
+    private function createMetadataFactory(Configuration $config): ClassMetadataFactoryInterface
     {
         $cacheDir = $config->getMetadataCacheDir();
         if ($cacheDir === null) {
@@ -657,7 +654,7 @@ class EntityManager implements EntityManagerInterface
         }
 
         $metadataFactory = new CompiledClassMetadataFactory();
-        $metadataFactory->setSnapshotCache(new FileClassMetadatasCache($cacheDir));
+        $metadataFactory->setCache(new FileClassMetadatasCache($cacheDir));
 
         return $metadataFactory;
     }
@@ -665,7 +662,7 @@ class EntityManager implements EntityManagerInterface
     private function configureMetadataCache(): void
     {
         $metadataCache = $this->config->getMetadataCache();
-        if (! $metadataCache) {
+        if ($metadataCache === null || ! $this->metadataFactory instanceof ClassMetadataFactory) {
             return;
         }
 

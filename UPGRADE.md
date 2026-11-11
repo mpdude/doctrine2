@@ -197,20 +197,18 @@ seen in an earlier row was yielded as an incomplete array without its own fields
 Subclasses of `ArrayHydrator` that override the deprecated `hydrateRowData()`
 keep the previous behavior.
 
-## New `Doctrine\ORM\Mapping\ClassMetadataFactoryInterface`
+## New `Doctrine\ORM\Mapping\ClassMetadataFactoryInterface`; widened `getMetadataFactory()` return type
 
 `ClassMetadataFactory` now implements a new `ClassMetadataFactoryInterface`, the ORM-specific
-contract for a class metadata factory. `EntityManagerInterface::getMetadataFactory()` still
-declares a return type of the concrete `ClassMetadataFactory` class, but a future major version
-will widen it to `ClassMetadataFactoryInterface`. Code that calls `getMetadataFactory()` and
-type-hints the result can switch to `ClassMetadataFactoryInterface` now to prepare for that
-change.
+contract for a class metadata factory. `EntityManagerInterface::getMetadataFactory()`,
+`EntityManagerDecorator::getMetadataFactory()` and `EntityManager::getMetadataFactory()` now
+declare a return type of `ClassMetadataFactoryInterface` instead of the concrete
+`ClassMetadataFactory` class. Code that calls `getMetadataFactory()` and type-hints the result
+against the concrete class must switch to `ClassMetadataFactoryInterface`.
 
 This also affects the (rare) case of custom persisters extending `AbstractEntityPersister` or
-`AbstractCollectionPersister`: their protected `$metadataFactory` property will widen to
-`ClassMetadataFactoryInterface` in a future major version. Methods receiving this property's
-value can accept `ClassMetadataFactoryInterface` already now. Subclasses that redeclare the
-property must keep `ClassMetadataFactory` until the parent property's type changes.
+`AbstractCollectionPersister`: their protected `$metadataFactory` property is now typed
+`ClassMetadataFactoryInterface`. Subclasses that redeclare the property must do the same.
 
 ## Deprecated `ClassMetadataFactory::getOwningSide()`
 

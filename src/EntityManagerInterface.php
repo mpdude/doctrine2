@@ -10,7 +10,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\ORM\Mapping\ClassMetadataFactoryInterface;
 use Doctrine\ORM\Proxy\ProxyFactory;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\FilterCollection;
@@ -45,11 +45,8 @@ interface EntityManagerInterface extends ObjectManager
 
     /**
      * Gets the metadata factory used to gather the metadata of classes.
-     *
-     * A future major version will widen this method's return type to `ClassMetadataFactoryInterface`;
-     * type-hint against that interface instead to prepare for the change.
      */
-    public function getMetadataFactory(): ClassMetadataFactory;
+    public function getMetadataFactory(): ClassMetadataFactoryInterface;
 
     /**
      * Gets an ExpressionBuilder used for object-oriented construction of query expressions.
